@@ -1,17 +1,107 @@
 import random
-mysonglist = ["可爱女人","星晴","黑色幽默","龙卷风","反方向的钟","爱在西元前","简单爱","开不了口","上海一九四三","安静","半岛铁盒","暗号","分裂","回到过去","晴天","东风破","你听得到",
-              '她的睫毛', "七里香", "借口","搁浅","园游会","夜曲","发如雪","黑色毛衣","枫","珊瑚海","一路向北","夜的第七章","听妈妈的话","千里之外","退后","心雨","白色风车","迷迭香","菊花台"
-              ,"彩虹","青花瓷","蒲公英的约定","最长的电影","给我一首歌的时间","花海","说好的幸福呢","兰亭序","时光机","稻香","说了再见","烟花易冷","我落泪·情绪零碎","爱的飞行日记","红尘客栈","大笨钟"
-              ,"算什么男人","手写的从前","听见下雨的声音","不该","告白气球","爱情废柴","还在流浪","最伟大的作品","说好不哭","红颜如霜","不爱我就拉倒","错过的烟火","粉色海洋","倒影","我是如此的相信"]
-songchosen = random.choice(mysonglist)
+from tkinter import *
+from tkinter import messagebox
+import tkinter as tk
 
-audiencelist = ["陈丽宁","杨凯心","唐朝","李宇辰","萧亦纯","王徐文豪","陶斯微","江未","邱子馨","李欣语","胡桢欣","孙浩博","鄢熠菲","夏梦薇","占宇涵","吴佳雨"]
+def center_window(w, h):
+    # 获取屏幕 宽、高
+    ws = root.winfo_screenwidth()
+    hs = root.winfo_screenheight()
+    # 计算 x, y 位置
+    x = (ws/2) - (w/2)
+    y = (hs/2) - (h/2)
+    root.geometry('%dx%d+%d+%d' % (w, h, x, y))
+
+def getsong():
+    global songchosen
+    songlist = open("songlist.txt", "r+")
+    mysonglist = []
+    for i in songlist:
+        mysonglist.append(i)
+    print("歌曲列表读取")
+    songchosen = random.choice(mysonglist)
+    songchosen = songchosen.replace("\n", "")
+    return songchosen
+def getaudience():
+    global audience
+    audiencelist = []
+    audlist = open("audlist.txt", "r+")
+    for i in audlist:
+       audiencelist.append(i)
+    print("观众列表读取")
+    personchosen = random.choice(audiencelist)
+    personchosen = personchosen.replace("\n", "")
+    return personchosen
+def update():
+    global songchosen
+    global personchosen
+    songchosen = getsong()
+    personchosen = getaudience()
+    songlabel.config(text = songchosen)
+    audlabel.config(text = personchosen)
+    print("观众与歌曲更新完成")
+def learnsong():
+    global entry
+    root2 = tk.Tk()
+    label = tk.Label(root2, text='请输入歌名', font=('Arial', 12), width=15, height=2)
+    label.pack()
+    entry = tk.Entry(root2) # 创建一个输入框
+    entry.pack()
+    button = tk.Button(root2, text='确定', font=('Arial', 12), width=10, height=1, command=learn2)
+    button.pack()
+    root2.mainloop()
+def learn2():
+    song = entry.get()
+    song = song+"\n"
+    songlist = open("songlist.txt", "a")
+    songlist.write(song)
+    songlist.close()
+    tk.messagebox.showinfo(title=None, message='歌曲添加成功')
+
+def addaud():
+    global entry
+    root2 = tk.Tk()
+    label = tk.Label(root2, text='请输入观众姓名', font=('Arial', 12), width=15, height=2)
+    label.pack()
+    entry = tk.Entry(root2) # 创建一个输入框
+    entry.pack()
+    button = tk.Button(root2, text='确定', font=('Arial', 12), width=10, height=1, command=addaud2)
+    button.pack()
+    root2.mainloop()
+def addaud2():
+    aud = entry.get()
+    aud = aud+"\n"
+    audlist = open("audlist.txt", "a")
+    audlist.write(aud)
+    audlist.close()
+    tk.messagebox.showinfo(title=None, message='观众添加成功')
+
+root = tk.Tk()
+center_window(500, 480)
+root.title("曼城周杰伦今日幸运粉丝连线程序")
+menubar = Menu(root)
+updatemenu = Menu(menubar, tearoff=0)
+updatemenu.add_command(label="添加歌曲", command=learnsong)
+updatemenu.add_command(label="添加观众", command=addaud)
+updatemenu.add_separator()
+updatemenu.add_command(label="退出", command=root.quit)
+menubar.add_cascade(label="设置", menu=updatemenu)
+root.config(menu=menubar)
+w = tk.Label(root, text="被选中听歌的幸运粉丝是", font=("Arial", 12), width=30, height=2)
+w.pack()
+audlabel = tk.Label(root, text=getaudience(), font=("Arial", 12), bg = "pink",width=30, height=2)
+audlabel.pack()
+w = tk.Label(root, text="将收听到的歌曲是", font=("Arial", 12), width=30, height=2)
+w.pack()
+songlabel = tk.Label(root, text=getsong(), font=("Arial", 12), bg = "pink",width=30, height=2)
+songlabel.pack()
+w = tk.Label(root, text="让我们恭喜这位粉丝", font=("Arial", 12), width=30, height=2)
+w.pack()
+w = tk.Button(root, text="再来一次", font=("Arial", 12), width=30, height=2, command=update)
+w.pack()
+w = tk.Button(root, text="退出", font=("Arial", 12), width=30, height=2, command=root.quit)
+w.pack()
+root.mainloop()
 
 
 
-
-
-
-
-personchosen = random.choice(audiencelist)
-print("接下来给",personchosen,"唱",songchosen)
